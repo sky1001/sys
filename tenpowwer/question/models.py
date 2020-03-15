@@ -1,6 +1,6 @@
 from ckeditor_uploader.fields import RichTextUploadingField
 from django.db import models # Create your models here.
-from user.models import User
+from users.models import User
 class Label(models.Model):
     label_name = models.CharField(max_length=20, null=True, default=None, verbose_name="标签名称")
     desc = models.CharField(max_length=200, null=True, default=None, verbose_name="标签描述")

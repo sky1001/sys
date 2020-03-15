@@ -1,5 +1,5 @@
 from django.apps import AppConfig
 
 
-class StoriesConfig(AppConfig):
+class ArticleConfig(AppConfig):
     name = 'article'

@@ -42,7 +42,9 @@ INSTALLED_APPS = [
     # 文章
     'article',
     # 招聘
-    'recruit'
+    'recruit',
+    # 用户
+    'users'
 ]
 
 MIDDLEWARE = [
@@ -128,3 +130,6 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
 
 STATIC_URL = '/static/'
+# 指明自定义的用户模型类
+AUTH_USER_MODEL = 'users.User'
+

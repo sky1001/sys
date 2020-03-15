@@ -23,5 +23,8 @@ urlpatterns = [
     # 头条
     url(r'^', include('article.urls')),
     # 问答
-    url(r'^', include('question.urls'))
+    url(r'^', include('question.urls')),
+    #
+    url(r'^', include('users.urls')),
+    url(r'^', include('recruit.urls'))
 ]
