@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'question',
     # 文章
     'article',
+    # 招聘
     'recruit'
 ]
 
