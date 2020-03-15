@@ -40,7 +40,7 @@ INSTALLED_APPS = [
     # 问题
     'question',
     # 文章
-    'article'
+    'article',
     'recruit'
 ]
 
