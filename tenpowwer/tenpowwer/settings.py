@@ -25,18 +25,20 @@ SECRET_KEY = 's_)^@irc)1^!p7@!lz1%#!qdbu1vcdxov4et7-3sk1u-mkpv*i'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['192.168.132.132','*']
 
 
 # Application definition
 
-INSTALLED_APPS = [
+INSTALLED_APPS = [# 将cors中间件写在第一行
+
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework',
     # 问题
     'question',
     # 文章
@@ -44,10 +46,12 @@ INSTALLED_APPS = [
     # 招聘
     'recruit',
     # 用户
-    'users'
+    'users',
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -133,3 +137,11 @@ STATIC_URL = '/static/'
 # 指明自定义的用户模型类
 AUTH_USER_MODEL = 'users.User'
 
+# 允许哪些域名端口跨域请求
+CORS_ORIGIN_WHITELIST = (
+    'http://192.168.132.132',
+    'http://scf-python.itheima.net',
+    'http://127.0.0.1:8080',
+    'http://localhost:3000',
+)
+CORS_ALLOW_CREDENTIALS = True  # 允许携带cookie
