@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dataSource name="tensquare@localhost">
+  <database-model serializer="dbm" rdbms="MYSQL" format-version="4.0">
+    <root id="1"/>
+    <schema id="2" parent="1" name="tensquare">
+      <Current>1</Current>
+      <Visible>1</Visible>
+    </schema>
+    <schema id="3" parent="1" name="django_demo"/>
+    <schema id="4" parent="1" name="exam"/>
+    <schema id="5" parent="1" name="heima"/>
+    <schema id="6" parent="1" name="ihome"/>
+    <schema id="7" parent="1" name="information_schema"/>
+    <schema id="8" parent="1" name="jing_dong"/>
+    <schema id="9" parent="1" name="meiduo"/>
+    <schema id="10" parent="1" name="mysql"/>
+    <schema id="11" parent="1" name="performance_schema"/>
+    <schema id="12" parent="1" name="python"/>
+    <schema id="13" parent="1" name="python31"/>
+    <schema id="14" parent="1" name="slavetest"/>
+    <schema id="15" parent="1" name="stock_db"/>
+    <schema id="16" parent="1" name="sys"/>
+  </database-model>
+</dataSource>
