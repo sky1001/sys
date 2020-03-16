@@ -162,3 +162,8 @@ CKEDITOR_CONFIGS = {
     },
 }
 CKEDITOR_UPLOAD_PATH = ''
+
+# FASTDFS
+# FDFS_BASE_URL = 'http://image.meiduo.site:8888/'
+FDFS_CLIENT_CONF = os.path.join(BASE_DIR, 'utils/fastdfs/client.conf')
+
