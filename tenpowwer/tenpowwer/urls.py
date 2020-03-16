@@ -19,7 +19,7 @@ from django.contrib import admin
 import article
 
 urlpatterns = [
-    url(r'^admin/', admin.site.urls),
+    # url(r'^admin/', admin.site.urls),
     # 头条
     url(r'^', include('article.urls')),
     # 问答

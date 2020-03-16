@@ -9,6 +9,8 @@ router = routers.SimpleRouter()
 router.register(r'article', ArticleViewSet, base_name='article')
 urlpatterns = [
     url(r'^channels/$', views.ChannelsViews.as_view({'get': 'list'})),
+    url(r'^labels/$', views.LabelsViews.as_view({'get': 'list'})),
+    url(r'^upload/avatar/$', views.UploadViews.as_view()),
     # url(r'^article/(?P<id>\d)/channel/', views.AcView.as_view({'get': 'list'})),
 ]
 urlpatterns += router.urls

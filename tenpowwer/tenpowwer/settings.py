@@ -53,6 +53,8 @@ INSTALLED_APPS = [# 将cors中间件写在第一行
     'spit',
     # 活动
     'gathering',
+# 将 django-ckeditor 注册到该列表中
+    'ckeditor',
 
 ]
 
@@ -61,7 +63,7 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
+    # 'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -151,3 +153,5 @@ CORS_ORIGIN_WHITELIST = (
     'http://localhost:3000',
 )
 CORS_ALLOW_CREDENTIALS = True  # 允许携带cookie
+# 拼接 fastDFS 的配置文件路径
+FASTDFS_PATH = os.path.join(BASE_DIR,'utils/fastdfs/client.conf')

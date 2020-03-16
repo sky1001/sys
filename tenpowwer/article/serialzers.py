@@ -11,3 +11,6 @@ class ArticleSerializerForList(serializers.ModelSerializer):
     class Meta:
         model = Article
         fields = ("id", "title","content","createtime","user","collected_users","collected","image","visits")
+class LabelsSerializer(serializers.Serializer):
+    id = serializers.IntegerField(read_only=True)
+    label_name = serializers.StringRelatedField()
