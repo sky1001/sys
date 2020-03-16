@@ -47,7 +47,14 @@ INSTALLED_APPS = [# 将cors中间件写在第一行
     'recruit',
     # 用户
     'users',
+<<<<<<< HEAD
     'corsheaders',
+=======
+    # 吐槽
+    'spit',
+    # 活动
+    'gathering',
+>>>>>>> 52c189e0305ea91524d78ba9ca8ad1cea79f2a5a
 ]
 
 MIDDLEWARE = [
