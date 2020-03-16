@@ -26,10 +26,11 @@ SECRET_KEY = 's_)^@irc)1^!p7@!lz1%#!qdbu1vcdxov4et7-3sk1u-mkpv*i'
 DEBUG = True
 
 ALLOWED_HOSTS = ['192.168.132.132','*']
-
+# 指定自定义的Django文件存储类
+DEFAULT_FILE_STORAGE = 'utils.fastdfs.fastdfs_storage.FastDFSStorage'
 
 # Application definition
-
+FDFS_BASE_URL = 'http://image.meiduo.site:8888/'
 INSTALLED_APPS = [# 将cors中间件写在第一行
 
     'django.contrib.admin',
@@ -47,14 +48,12 @@ INSTALLED_APPS = [# 将cors中间件写在第一行
     'recruit',
     # 用户
     'users',
-<<<<<<< HEAD
     'corsheaders',
-=======
     # 吐槽
     'spit',
     # 活动
     'gathering',
->>>>>>> 52c189e0305ea91524d78ba9ca8ad1cea79f2a5a
+
 ]
 
 MIDDLEWARE = [
