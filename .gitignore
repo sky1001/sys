@@ -115,4 +115,7 @@ dmypy.json
 .pyre/
 
 # idea
-.idea/
+.idea/*
+*.xml
+# migrations
+*/migrations/*
