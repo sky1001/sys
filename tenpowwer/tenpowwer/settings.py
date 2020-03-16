@@ -44,7 +44,11 @@ INSTALLED_APPS = [
     # 招聘
     'recruit',
     # 用户
-    'users'
+    'users',
+    # 吐槽
+    'spit',
+    # 活动
+    'gathering',
 ]
 
 MIDDLEWARE = [
