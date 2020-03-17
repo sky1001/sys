@@ -2,7 +2,8 @@ from django import http
 from django.shortcuts import render
 from django.views import View
 from django_redis import get_redis_connection
-from rest_framework.generics import CreateAPIView
+from rest_framework.generics import CreateAPIView, RetrieveUpdateAPIView
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -10,6 +11,9 @@ from rest_framework.views import APIView
 from users import serializers
 
 # 短信验证码
+from users.models import User
+
+
 class SmsView(APIView):
     def get(self,request,mobile):
 
@@ -43,4 +47,20 @@ class SmsView(APIView):
 # 用户注册
 class CreateUserView(CreateAPIView):
     serializer_class = serializers.CreateUserSerializer
+
+
+# 用户详细信息
+class UserListView(RetrieveUpdateAPIView):
+    serializer_class = serializers.UserListSerializer
+    permission_classes = [IsAuthenticated]
+    # queryset = User.objects.all()
+    def get_object(self):
+        user = self.request.user
+        replies = user.replies.all()
+        user.answer_question = []
+        for item in replies:
+            if item.type == 2:
+                user.answer_question.append(item)
+        return user
+
 

@@ -5,9 +5,13 @@ from django.conf import settings
 from django_redis import get_redis_connection
 from rest_framework import serializers
 from datetime import datetime,timedelta
+
+from article.models import Article
+from question.models import Label, Question, Reply
+from recruit.models import Enterprise
 from users.models import User
 
-
+# 注册
 class CreateUserSerializer(serializers.ModelSerializer):
     sms_code = serializers.CharField(label='短信验证码', write_only=True)
     token = serializers.CharField(label='token', read_only=True)
@@ -74,5 +78,45 @@ class CreateUserSerializer(serializers.ModelSerializer):
         user.token = token
         return user
 
+class LabelSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Label
+        fields = '__all__'
+
+class QuestionSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Question
+        fields = '__all__'
+
+class ReplySerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Reply
+        fields = '__all__'
+
+class ArticleSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Article
+        fields = '__all__'
+
+class EnterpriseSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Enterprise
+        fields = '__all__'
+
+# 个人中心
+class UserListSerializer(serializers.ModelSerializer):
+    labels = LabelSerializer(required=False, many=True)
+    username = serializers.CharField(read_only=True)
+    questions = QuestionSerializer(read_only=True, many=True)
+    answer_question = ReplySerializer(read_only=True, many=True)
+    collected_articles = ArticleSerializer(read_only=True, many=True)
+    enterpises = EnterpriseSerializer(read_only=True, many=True)
+    class Meta:
+        model = User
+        fields = ['id', 'username', 'password', 'mobile', 'avatar','labels','questions','answer_question','collected_articles','enterpises']
 
 

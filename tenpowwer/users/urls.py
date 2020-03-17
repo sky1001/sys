@@ -11,6 +11,9 @@ urlpatterns = [
     # 注册
     url(r'^users/$', views.CreateUserView.as_view()),
 
-    # 1.使用 drf-jwt 实现返回token的登录功能
+    # 登录
     url(r'^authorizations/$', obtain_jwt_token),
+
+    # 用户详细信息
+    url(r'^user/$', views.UserListView.as_view()),
 ]
