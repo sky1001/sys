@@ -165,10 +165,8 @@ CKEDITOR_CONFIGS = {
 }
 CKEDITOR_UPLOAD_PATH = ''
 
-<<<<<<< HEAD
 # FASTDFS
 # FDFS_BASE_URL = 'http://image.meiduo.site:8888/'
-=======
 CACHES = {
     "default": { # 默认
         "BACKEND": "django_redis.cache.RedisCache",
@@ -214,6 +212,5 @@ AUTHENTICATION_BACKENDS = [
 ]
 
 FDFS_BASE_URL = 'http://image.meiduo.site:8888/'
->>>>>>> 539f8c7afe32049806a27e80d65eb4646605954d
 FDFS_CLIENT_CONF = os.path.join(BASE_DIR, 'utils/fastdfs/client.conf')
 

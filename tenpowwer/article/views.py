@@ -57,7 +57,7 @@ class ArticleViewSet(ModelViewSet):
     def create(self, request, *args, **kwargs):
 
         try:
-            user = User.objects.all()
+            user = request.user
         except Exception:
             user = None
 
