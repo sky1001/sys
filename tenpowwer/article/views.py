@@ -51,7 +51,7 @@ class LabelsViews(ModelViewSet):
 class ArticleViewSet(ModelViewSet):
     queryset = Article.objects.all()
     serializer_class = ArticleSerializerForList
-    # pagination_class = MeiduoPagination# 按频道获取文章列表 /article/{pk}/channel/
+    pagination_class = MeiduoPagination# 按频道获取文章列表 /article/{pk}/channel/
     # 新建文章 /article/
     # 新建文章 /article/
     def create(self, request, *args, **kwargs):
@@ -87,6 +87,32 @@ class ArticleViewSet(ModelViewSet):
             s = ArticleSerializerForList(instance=articles, many=True)
             return Response(s.data)
 
+    @action(methods=['put'], detail=True, url_path="collect")
+    def get_article_by_collect(self, request, pk):
+        try:
+            # 获取用户数据
+            user = request.user
+        except:
+            user = None
+        # 判断用户是否存在
+        if user is not None or user.is_authenticated:
+            art = self.get_object()
+            # 用户存在
+            if user in art.collected_users.all():
+                art.collected_users.remove(user)
+                art.save()
+                return Response({'success': True, 'message': '取消收藏'})
+            else:
+                art.collected_users.add(user)
+                art.save()
+                return Response({'success': True, 'message': '收藏成功'})
+
+
+        # 获取用户的对象
+        # art = Article.objects.get(pk=pk)
+        # 获取收藏列表
+        # art_data = art.get('collected_users')
+        # if pk in art_data
     # # 文章列表
     def list(self, request, *args, **kwargs):
         articles = super().get_queryset()
