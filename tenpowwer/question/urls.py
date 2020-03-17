@@ -7,7 +7,8 @@ from . import views
 
 router = routers.SimpleRouter()
 router.register(r'questions', QuestionViewSet, base_name='question')
+router.register(r'reply', views.ReplyViewSet)
 urlpatterns = [
-    # url(r'^/$', views.aa.as_view()),
+
 ]
 urlpatterns += router.urls
