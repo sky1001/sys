@@ -2,18 +2,18 @@ from django import http
 from django.shortcuts import render
 from django.views import View
 from django_redis import get_redis_connection
-from rest_framework.generics import CreateAPIView, RetrieveUpdateAPIView, UpdateAPIView
+from rest_framework.generics import CreateAPIView, RetrieveUpdateAPIView, UpdateAPIView, RetrieveAPIView, ListAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-
+from question.models import Label
 from users import serializers
 
 # 短信验证码
 from users.models import User
 
-
+# 短信验证码
 class SmsView(APIView):
     def get(self,request,mobile):
 
@@ -71,3 +71,17 @@ class UpadtePwdView(UpdateAPIView):
     def get_object(self):
         return self.request.user
 
+# 显示擅长技术
+class LabelView(ListAPIView):
+    serializer_class = serializers.LabelSerializer
+    # permission_classes = [IsAuthenticated]
+    queryset = Label.objects.all()
+    def get_object(self):
+        return self.request.user
+
+# 修改擅长技术
+class UpdatelabelView(UpdateAPIView):
+    serializer_class = serializers.UpdateLabelSerializer
+    permission_classes = [IsAuthenticated]
+    def get_object(self):
+        return self.request.user

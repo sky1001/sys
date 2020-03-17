@@ -81,31 +81,33 @@ class CreateUserSerializer(serializers.ModelSerializer):
 class LabelSerializer(serializers.ModelSerializer):
     class Meta:
         model = Label
-        fields = '__all__'
+        fields =["id", "label_name"]
+
 
 class QuestionSerializer(serializers.ModelSerializer):
-
+    user = serializers.StringRelatedField(read_only=True)
+    labels = serializers.StringRelatedField(read_only=True,many=True)
     class Meta:
         model = Question
-        fields = '__all__'
+        fields = ["id","createtime","labels","reply","replyname","replytime","title","unuseful_count","useful_count","user","visits"]
 
 class ReplySerializer(serializers.ModelSerializer):
-
+    user = CreateUserSerializer(read_only=True)
     class Meta:
         model = Reply
-        fields = '__all__'
+        fields = ["id", "content","createtime","useful_count",'problem',"unuseful_count","user"]
 
 class ArticleSerializer(serializers.ModelSerializer):
-
+    user = CreateUserSerializer(read_only=True)
+    collected = serializers.BooleanField(default=False)
     class Meta:
         model = Article
-        fields = '__all__'
+        fields = ("id", "title","content","createtime","user","collected_users","collected","image","visits")
 
 class EnterpriseSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = Enterprise
-        fields = '__all__'
+        fields = ('id', 'name','labels','logo','recruits','summary')
 
 # 个人中心
 class UserListSerializer(serializers.ModelSerializer):
@@ -130,3 +132,13 @@ class UserUpdatePwdSerializer(serializers.ModelSerializer):
         user.set_password(validated_data['password'])
         user.save()
         return user
+
+
+# 修改擅长技术
+class UpdateLabelSerializer(serializers.ModelSerializer):
+    labels = serializers.PrimaryKeyRelatedField(required=True, many=True,queryset=Label.objects.all())
+    class Meta:
+        model = User
+        fields = ('id','labels')
+
+

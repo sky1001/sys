@@ -19,4 +19,10 @@ urlpatterns = [
 
     # 修改密码
     url(r'^user/password/$', views.UpadtePwdView.as_view()),
+
+    # 修改擅长技术
+    url(r'^user/label/$', views.UpdatelabelView.as_view()),
+
+    # 显示擅长技术
+    url(r'^labels/$', views.LabelView.as_view()),
 ]
