@@ -1,3 +1,6 @@
+import json
+
+import base64
 from django import http
 from django.conf import settings
 from django.shortcuts import render
@@ -10,11 +13,13 @@ from article.models import Channel, Article
 # Create your views here.
 from rest_framework.viewsets import ModelViewSet
 
-from article.serialzers import  ChannelsSerializers, ArticleSerializerForList, LabelsSerializer
+from article.serialzers import  ChannelsSerializers, ArticleSerializerForList, LabelsSerializer, \
+    ArticleSerializerForCreate
 from question.models import Label
 # 上传图片
 # from tenpowwer import settings
 from tenpowwer.settings import FDFS_BASE_URL
+# from article.serializers import ArticleSerializerForCreate,
 
 
 class UploadViews(View):
@@ -45,8 +50,27 @@ class LabelsViews(ModelViewSet):
 
 class ArticleViewSet(ModelViewSet):
     queryset = Article.objects.all()
-    # serializer_class = ArticleSerializers
-    pagination_class = MeiduoPagination# 按频道获取文章列表 /article/{pk}/channel/
+    serializer_class = ArticleSerializerForList
+    # pagination_class = MeiduoPagination# 按频道获取文章列表 /article/{pk}/channel/
+    # 新建文章 /article/
+    # 新建文章 /article/
+    def create(self, request, *args, **kwargs):
+
+        try:
+            user = User.objects.all()
+        except Exception:
+            user = None
+
+        if user is not None and user.is_authenticated:
+            request_params = request.data
+            request_params['user'] = user.id
+            serializer = ArticleSerializerForCreate(data=request_params)
+            serializer.request = request
+            serializer.is_valid(raise_exception=True)
+            article = serializer.save()
+            return Response({'success': True, 'message': '发表成功', 'articleid': article.id})
+        else:
+            return Response({'success': False, 'message': '未登录'}, status=400)
     @action(methods=['get'], detail=True, url_path="channel")
     def get_article_by_channel(self, request, pk):
         if pk == "-1":
@@ -62,6 +86,12 @@ class ArticleViewSet(ModelViewSet):
         else:
             s = ArticleSerializerForList(instance=articles, many=True)
             return Response(s.data)
+
+    # # 文章列表
+    def list(self, request, *args, **kwargs):
+        articles = super().get_queryset()
+        s = ArticleSerializerForList(instance=articles, many=True)
+        return Response(s.data)
     # 收藏和取消收藏
     # @action(methods=['PUT'],detail=True,url_path='collect')
     # def get_article_by_collect(self,request,pk):

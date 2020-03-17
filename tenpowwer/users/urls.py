@@ -1,7 +1,8 @@
-
 from django.conf.urls import url
-from . import views
+from rest_framework_jwt.views import obtain_jwt_token
+
+from users import views
 
 urlpatterns = [
-    # url(r'^/$', views.aa.as_view()),
+
 ]
