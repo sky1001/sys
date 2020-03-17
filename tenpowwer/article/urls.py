@@ -15,4 +15,3 @@ urlpatterns = [
     # url(r'^article/(?P<id>\d)/channel/', views.AcView.as_view({'get': 'list'})),
 ]
 urlpatterns += router.urls
-print(urlpatterns)

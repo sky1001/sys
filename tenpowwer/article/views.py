@@ -10,7 +10,7 @@ from article.models import Channel, Article,Comment
 from rest_framework.viewsets import ModelViewSet,ReadOnlyModelViewSet
 
 from article.serialzers import  ChannelsSerializers, ArticleSerializerForList, LabelsSerializer, \
-    ArticleSerializerForCreate,CommentSerializer,ArticleSerializerForDetail
+    ArticleSerializerForCreate,CommentSerializer,ArticleSerializerForDetail,CommentSerializerForCreate
 from question.models import Label
 # 上传图片
 # from tenpowwer import settings
@@ -65,7 +65,6 @@ class ArticleViewSet(ModelViewSet):
         article.save()
         s = ArticleSerializerForDetail(instance=article)
         return Response(s.data)
-    # 新建文章 /article/
     # 新建文章 /article/
     def create(self, request, *args, **kwargs):
 
@@ -132,20 +131,26 @@ class ArticleViewSet(ModelViewSet):
             user = None
         # 判断用户是否存在
         if user is not None or user.is_authenticated:
-            arti = self.get_object()
-            arti.comment_count+=1
-            arti.save()
-            qur = request.data
-            par = qur.pop('parent')
-            par= Comment.objects.get(pk=par)
-            qur['user']=user
-            qur['article'] = arti
-            qur['parent'] = par
-            com = Comment.objects.create(**qur)
-            ser = CommentSerializer(com)
-            # ser.save()
-            # ser.is_valid(raise_exception=True)
-            # sers = ser.save()
+            # arti = self.get_object()
+            # arti.comment_count+=1
+            # arti.save()
+            # qur = request.data
+            # par = qur.pop('parent')
+            # par= Comment.objects.get(pk=par)
+            # qur['user']=user
+            # qur['article'] = arti
+            # qur['parent'] = par
+            # com = Comment.objects.create(**qur)
+            # ser = CommentSerializer(com)
+            article = self.get_object()
+            article.comment_count += 1
+            article.save()
+            request_params = request.data
+            request_params['user'] = user.id
+            request_params['article'] = article.id
+            s = CommentSerializerForCreate(data=request_params)
+            s.is_valid(raise_exception=True)
+            s.save()
             return Response({'success': True, 'message': '评论成功'})
         else:
             return Response({'success': False, 'message': '未登录'}, status=400)

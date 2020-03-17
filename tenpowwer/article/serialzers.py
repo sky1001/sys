@@ -30,6 +30,11 @@ class ArticleSerializerForCreate(serializers.ModelSerializer):
     class Meta:
         model = Article
         exclude = ('collected_users',)
+class CommentSerializerForCreate(serializers.ModelSerializer):
+
+    class Meta:
+        model = Comment
+        fields = ('id', 'content','article','user','parent','createtime')
 class CommentSerializer(serializers.ModelDurationField):
     user = serializers.StringRelatedField(read_only=True)
     subs = CommentSerializerItem(read_only=True, many=True)
