@@ -13,6 +13,8 @@ https://docs.djangoproject.com/en/1.11/ref/settings/
 import os
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
+import datetime
+
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # WSGIPassAuthorization
 
@@ -25,7 +27,7 @@ SECRET_KEY = 's_)^@irc)1^!p7@!lz1%#!qdbu1vcdxov4et7-3sk1u-mkpv*i'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['192.168.132.132','*']
+ALLOWED_HOSTS = ['192.168.217.134','*']
 # 指定自定义的Django文件存储类
 DEFAULT_FILE_STORAGE = 'utils.fastdfs.fastdfs_storage.FastDFSStorage'
 
@@ -144,7 +146,7 @@ AUTH_USER_MODEL = 'users.User'
 
 # 允许哪些域名端口跨域请求
 CORS_ORIGIN_WHITELIST = (
-    'http://192.168.132.132',
+    'http://192.168.217.134',
     'http://scf-python.itheima.net',
     'http://127.0.0.1:8080',
     'http://localhost:3000',
@@ -163,7 +165,55 @@ CKEDITOR_CONFIGS = {
 }
 CKEDITOR_UPLOAD_PATH = ''
 
+<<<<<<< HEAD
 # FASTDFS
 # FDFS_BASE_URL = 'http://image.meiduo.site:8888/'
+=======
+CACHES = {
+    "default": { # 默认
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://127.0.0.1:6379/0",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        }
+    },
+    "session": { # session
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://127.0.0.1:6379/1",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        }
+    },
+    "sms_code": {  # 保存短信验证码--3号库
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://127.0.0.1:6379/3",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        }
+    },
+}
+SESSION_ENGINE = "django.contrib.sessions.backends.cache"
+SESSION_CACHE_ALIAS = "session"
+
+# jwt-token认证
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.BasicAuthentication',
+    ),
+}
+
+JWT_AUTH = {
+    'JWT_EXPIRATION_DELTA': datetime.timedelta(days=7),
+    'JWT_RESPONSE_PAYLOAD_HANDLER': 'users.utils.jwt_response_payload_handler',
+}
+# 自定义认证后端
+AUTHENTICATION_BACKENDS = [
+    'users.utils.UsernameMobileAuthBackend',
+]
+
+FDFS_BASE_URL = 'http://image.meiduo.site:8888/'
+>>>>>>> 539f8c7afe32049806a27e80d65eb4646605954d
 FDFS_CLIENT_CONF = os.path.join(BASE_DIR, 'utils/fastdfs/client.conf')
 
