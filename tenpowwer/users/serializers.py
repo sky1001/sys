@@ -119,4 +119,14 @@ class UserListSerializer(serializers.ModelSerializer):
         model = User
         fields = ['id', 'username', 'password', 'mobile', 'avatar','labels','questions','answer_question','collected_articles','enterpises']
 
+# 修改密码
+class UserUpdatePwdSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['password']
 
+    def update(self, instance, validated_data):
+        user = super().update(instance, validated_data)
+        user.set_password(validated_data['password'])
+        user.save()
+        return user

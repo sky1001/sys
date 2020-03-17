@@ -2,7 +2,7 @@ from django import http
 from django.shortcuts import render
 from django.views import View
 from django_redis import get_redis_connection
-from rest_framework.generics import CreateAPIView, RetrieveUpdateAPIView
+from rest_framework.generics import CreateAPIView, RetrieveUpdateAPIView, UpdateAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -63,4 +63,11 @@ class UserListView(RetrieveUpdateAPIView):
                 user.answer_question.append(item)
         return user
 
+# 修改密码
+class UpadtePwdView(UpdateAPIView):
+    serializer_class = serializers.UserUpdatePwdSerializer
+    permission_classes = [IsAuthenticated]
+    # queryset = User.objects.all()
+    def get_object(self):
+        return self.request.user
 

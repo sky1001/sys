@@ -16,4 +16,7 @@ urlpatterns = [
 
     # 用户详细信息
     url(r'^user/$', views.UserListView.as_view()),
+
+    # 修改密码
+    url(r'^user/password/$', views.UpadtePwdView.as_view()),
 ]
