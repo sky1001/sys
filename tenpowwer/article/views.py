@@ -1,20 +1,16 @@
-import json
 
-import base64
 from django import http
 from django.conf import settings
-from django.shortcuts import render
 from django.views import View
 from rest_framework.decorators import action
 from rest_framework.response import Response
-
 from article.mixin import MeiduoPagination
-from article.models import Channel, Article
+from article.models import Channel, Article,Comment
 # Create your views here.
 from rest_framework.viewsets import ModelViewSet,ReadOnlyModelViewSet
 
 from article.serialzers import  ChannelsSerializers, ArticleSerializerForList, LabelsSerializer, \
-    ArticleSerializerForCreate
+    ArticleSerializerForCreate,CommentSerializer,ArticleSerializerForDetail
 from question.models import Label
 # 上传图片
 # from tenpowwer import settings
@@ -29,8 +25,6 @@ class SearchViews(ReadOnlyModelViewSet):
         text = self.request.query_params.get('text')
         # 查询内容
         atr = Article.objects.filter(title__contains=text)
-        # ser = self.get_serializer(data = atr,many=True)
-        # ser = ser.is_valid()
         return atr
 
 class UploadViews(View):
@@ -63,6 +57,14 @@ class ArticleViewSet(ModelViewSet):
     queryset = Article.objects.all()
     serializer_class = ArticleSerializerForList
     pagination_class = MeiduoPagination# 按频道获取文章列表 /article/{pk}/channel/
+
+    # 文章详情  /article/{id}/
+    def retrieve(self, request, *args, **kwargs):
+        article = super().get_object()
+        article.visits += 1
+        article.save()
+        s = ArticleSerializerForDetail(instance=article)
+        return Response(s.data)
     # 新建文章 /article/
     # 新建文章 /article/
     def create(self, request, *args, **kwargs):
@@ -97,7 +99,7 @@ class ArticleViewSet(ModelViewSet):
         else:
             s = ArticleSerializerForList(instance=articles, many=True)
             return Response(s.data)
-
+    # 收藏和取消收藏
     @action(methods=['put'], detail=True, url_path="collect")
     def get_article_by_collect(self, request, pk):
         try:
@@ -117,23 +119,51 @@ class ArticleViewSet(ModelViewSet):
                 art.collected_users.add(user)
                 art.save()
                 return Response({'success': True, 'message': '收藏成功'})
-
-
-        # 获取用户的对象
-        # art = Article.objects.get(pk=pk)
-        # 获取收藏列表
-        # art_data = art.get('collected_users')
-        # if pk in art_data
     # # 文章列表
     def list(self, request, *args, **kwargs):
         articles = super().get_queryset()
         s = ArticleSerializerForList(instance=articles, many=True)
         return Response(s.data)
-    # 收藏和取消收藏
-    # @action(methods=['PUT'],detail=True,url_path='collect')
-    # def get_article_by_collect(self,request,pk):
-
+    @action(methods=['post'],detail=True,url_path='publish_comment')
+    def get_artcle_by_publish_comment(self,request,pk):
+        try:
+            user = request.user
+        except:
+            user = None
+        # 判断用户是否存在
+        if user is not None or user.is_authenticated:
+            arti = self.get_object()
+            arti.comment_count+=1
+            arti.save()
+            qur = request.data
+            par = qur.pop('parent')
+            par= Comment.objects.get(pk=par)
+            qur['user']=user
+            qur['article'] = arti
+            qur['parent'] = par
+            com = Comment.objects.create(**qur)
+            ser = CommentSerializer(com)
+            # ser.save()
+            # ser.is_valid(raise_exception=True)
+            # sers = ser.save()
+            return Response({'success': True, 'message': '评论成功'})
+        else:
+            return Response({'success': False, 'message': '未登录'}, status=400)
+    @action(methods=['get'],detail=True)
+    def get_comment_by(self,request,pk):
+        try:
+            user = request.user
+        except:
+            user = None
+        # 判断用户是否存在
+        if user is not None or user.is_authenticated:
+            articles = super().get_queryset()
+            com = Comment.objects.filter(article=articles)
+            return com
+        else:
+            return Response({'success': False, 'message': '未登录'}, status=400)
 class ChannelsViews(ModelViewSet):
     queryset =Channel.objects.all()
     serializer_class = ChannelsSerializers
     pagination_class = MeiduoPagination
+
