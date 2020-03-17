@@ -107,7 +107,7 @@ class RecruitViewSet(ModelViewSet):
         jobs = self.get_queryset()
         ret_jobs = []
         # 没选城市  也没给关键词  查所有职位
-        if not cityname and not keyword:
+        if (not cityname or cityname=='全部')and not keyword:
             ret_jobs = jobs
         # 有城市  没有关键词  查该城市的所有职位
         elif cityname and not keyword:
@@ -115,7 +115,7 @@ class RecruitViewSet(ModelViewSet):
                 if job.city == cityname:
                     ret_jobs.append(job)
         #  没城市  但有关键词  查包含关键词的所有职位
-        elif not cityname and keyword:
+        elif (not cityname or cityname=='全部') and keyword:
             for job in jobs:
                 if job.jobname.lower().find(keyword.lower()) != -1:
                     ret_jobs.append(job)
@@ -124,6 +124,7 @@ class RecruitViewSet(ModelViewSet):
             for job in jobs:
                 if job.city == cityname and job.jobname.lower().find(keyword.lower()) != -1:
                     ret_jobs.append(job)
+
 
         serializer = self.get_serializer(instance=ret_jobs, many=True)
         return Response(serializer.data)
