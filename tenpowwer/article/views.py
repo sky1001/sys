@@ -11,7 +11,7 @@ from rest_framework.response import Response
 from article.mixin import MeiduoPagination
 from article.models import Channel, Article
 # Create your views here.
-from rest_framework.viewsets import ModelViewSet
+from rest_framework.viewsets import ModelViewSet,ReadOnlyModelViewSet
 
 from article.serialzers import  ChannelsSerializers, ArticleSerializerForList, LabelsSerializer, \
     ArticleSerializerForCreate
@@ -20,7 +20,18 @@ from question.models import Label
 # from tenpowwer import settings
 from tenpowwer.settings import FDFS_BASE_URL
 # from article.serializers import ArticleSerializerForCreate,
-
+# 获取数据
+class SearchViews(ReadOnlyModelViewSet):
+    serializer_class = ArticleSerializerForList
+    pagination_class = MeiduoPagination
+    def get_queryset(self):
+        # 获取搜索内容
+        text = self.request.query_params.get('text')
+        # 查询内容
+        atr = Article.objects.filter(title__contains=text)
+        # ser = self.get_serializer(data = atr,many=True)
+        # ser = ser.is_valid()
+        return atr
 
 class UploadViews(View):
     def post(self,request):
