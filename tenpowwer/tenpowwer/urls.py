@@ -24,7 +24,10 @@ urlpatterns = [
     url(r'^', include('article.urls')),
     # 问答
     url(r'^', include('question.urls')),
-    #
+    # 用户
     url(r'^', include('users.urls')),
-    url(r'^', include('recruit.urls'))
+    # 招聘
+    url(r'^', include('recruit.urls')),
+    # 吐槽
+    url(r'^', include('spit.urls')),
 ]
