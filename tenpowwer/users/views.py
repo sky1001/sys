@@ -3,12 +3,16 @@ from django import http
 from django.shortcuts import render
 from django.views import View
 from django_redis import get_redis_connection
-from rest_framework.generics import CreateAPIView
+from rest_framework.generics import CreateAPIView, RetrieveUpdateAPIView, UpdateAPIView, RetrieveAPIView, ListAPIView
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-
+from question.models import Label
 from users import serializers
+
+# 短信验证码
+from users.models import User
 
 # 短信验证码
 class SmsView(APIView):
@@ -46,3 +50,39 @@ class CreateUserView(CreateAPIView):
     serializer_class = serializers.CreateUserSerializer
 
 
+# 用户详细信息
+class UserListView(RetrieveUpdateAPIView):
+    serializer_class = serializers.UserListSerializer
+    permission_classes = [IsAuthenticated]
+    # queryset = User.objects.all()
+    def get_object(self):
+        user = self.request.user
+        replies = user.replies.all()
+        user.answer_question = []
+        for item in replies:
+            if item.type == 2:
+                user.answer_question.append(item)
+        return user
+
+# 修改密码
+class UpadtePwdView(UpdateAPIView):
+    serializer_class = serializers.UserUpdatePwdSerializer
+    permission_classes = [IsAuthenticated]
+    # queryset = User.objects.all()
+    def get_object(self):
+        return self.request.user
+
+# 显示擅长技术
+class LabelView(ListAPIView):
+    serializer_class = serializers.LabelSerializer
+    # permission_classes = [IsAuthenticated]
+    queryset = Label.objects.all()
+    def get_object(self):
+        return self.request.user
+
+# 修改擅长技术
+class UpdatelabelView(UpdateAPIView):
+    serializer_class = serializers.UpdateLabelSerializer
+    permission_classes = [IsAuthenticated]
+    def get_object(self):
+        return self.request.user

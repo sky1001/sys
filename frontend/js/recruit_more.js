@@ -4,7 +4,7 @@ var vm = new Vue({
         latestJobList: [],
         hotEnterpriseList: [],
         cityList: [],
-        searchCity: '北京',
+        searchCity: '全部',
         keyword: ''
     },
     mounted() {
