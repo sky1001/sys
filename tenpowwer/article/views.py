@@ -10,7 +10,7 @@ from article.models import Channel, Article,Comment
 from rest_framework.viewsets import ModelViewSet,ReadOnlyModelViewSet
 
 from article.serialzers import  ChannelsSerializers, ArticleSerializerForList, LabelsSerializer, \
-    ArticleSerializerForCreate,CommentSerializer,ArticleSerializerForDetail,CommentSerializerForCreate
+    ArticleSerializerForCreate,ArticleSerializerForDetail,CommentSerializerForCreate
 from question.models import Label
 # 上传图片
 # from tenpowwer import settings
