@@ -59,7 +59,14 @@ class QuestionViewSet(ModelViewSet):
         # page = self.paginate_queryset(question)
         s = QuestionSerializerForDetail(instance=question, many=True)
         return Response(s.data)
-    # 回答有用
+    # 等待回答
+    @action(methods=['get'], detail=True, url_path='label/wait')
+    def question_by_wait(self, request, pk):
+        # 获取用户
+        question = Question.objects.filter(reply=0).order_by('visits')
+        # page = self.paginate_queryset(question)
+        s = QuestionSerializerForDetail(instance=question, many=True)
+        return Response(s.data)
 class ReplyViewSet(ModelViewSet):
     queryset = Reply.objects.all()
     serializer_class = RelySerializers
@@ -74,7 +81,13 @@ class ReplyViewSet(ModelViewSet):
             re['user'] = user.id
             ser = RelySerializers(data=re)
             ser.is_valid(raise_exception=True)
-            ser.save()
+            reply = ser.save()
+            problem = reply.problem
+            if request.data.get('type') == 2:
+                problem.reply += 1
+                problem.replyname = reply.user.username
+                problem.replytime = reply.createtime
+                problem.save()
             return Response({'sucess':True,'message':'增加成功'})
         else:
             return Response({'success': False, 'message': '未登录'}, status=400)
