@@ -5,9 +5,13 @@ from django.conf import settings
 from django_redis import get_redis_connection
 from rest_framework import serializers
 from datetime import datetime,timedelta
+
+from article.models import Article
+from question.models import Label, Question, Reply
+from recruit.models import Enterprise
 from users.models import User
 
-
+# 注册
 class CreateUserSerializer(serializers.ModelSerializer):
     sms_code = serializers.CharField(label='短信验证码', write_only=True)
     token = serializers.CharField(label='token', read_only=True)
@@ -74,5 +78,67 @@ class CreateUserSerializer(serializers.ModelSerializer):
         user.token = token
         return user
 
+class LabelSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Label
+        fields =["id", "label_name"]
+
+
+class QuestionSerializer(serializers.ModelSerializer):
+    user = serializers.StringRelatedField(read_only=True)
+    labels = serializers.StringRelatedField(read_only=True,many=True)
+    class Meta:
+        model = Question
+        fields = ["id","createtime","labels","reply","replyname","replytime","title","unuseful_count","useful_count","user","visits"]
+
+class ReplySerializer(serializers.ModelSerializer):
+    user = CreateUserSerializer(read_only=True)
+    class Meta:
+        model = Reply
+        fields = ["id", "content","createtime","useful_count",'problem',"unuseful_count","user"]
+
+class ArticleSerializer(serializers.ModelSerializer):
+    user = CreateUserSerializer(read_only=True)
+    collected = serializers.BooleanField(default=False)
+    class Meta:
+        model = Article
+        fields = ("id", "title","content","createtime","user","collected_users","collected","image","visits")
+
+class EnterpriseSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Enterprise
+        fields = ('id', 'name','labels','logo','recruits','summary')
+
+# 个人中心
+class UserListSerializer(serializers.ModelSerializer):
+    labels = LabelSerializer(required=False, many=True)
+    username = serializers.CharField(read_only=True)
+    questions = QuestionSerializer(read_only=True, many=True)
+    answer_question = ReplySerializer(read_only=True, many=True)
+    collected_articles = ArticleSerializer(read_only=True, many=True)
+    enterpises = EnterpriseSerializer(read_only=True, many=True)
+    class Meta:
+        model = User
+        fields = ['id', 'username', 'password', 'mobile', 'avatar','labels','questions','answer_question','collected_articles','enterpises']
+
+# 修改密码
+class UserUpdatePwdSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['password']
+
+    def update(self, instance, validated_data):
+        user = super().update(instance, validated_data)
+        user.set_password(validated_data['password'])
+        user.save()
+        return user
+
+
+# 修改擅长技术
+class UpdateLabelSerializer(serializers.ModelSerializer):
+    labels = serializers.PrimaryKeyRelatedField(required=True, many=True,queryset=Label.objects.all())
+    class Meta:
+        model = User
+        fields = ('id','labels')
 
 
