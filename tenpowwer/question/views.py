@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from django_redis import get_redis_connection
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
@@ -67,6 +68,54 @@ class QuestionViewSet(ModelViewSet):
         # page = self.paginate_queryset(question)
         s = QuestionSerializerForDetail(instance=question, many=True)
         return Response(s.data)
+
+    @action(methods=['put'], detail=True, url_path="unuseful")
+    def question_by_unuserful(self, request, pk):
+        # 判断用户是否存在
+        try:
+            user = request.user
+        except:
+            user = None
+        if user is not None or user.is_is_authenticated:
+            redis_conn = get_redis_connection('question')
+            flag = redis_conn.hget("question_unuserful_%s" % user.id, pk)
+            if flag:
+                return Response({'success': False, 'message': '请不要重复操作'})
+            # 获取问答的对象
+            res = self.get_object()
+            # 无用数加1
+            res.unuseful_count += 1
+            # 保存
+            res.save()
+            # 将数据存入redis数据库
+            redis_conn.hset("question_unuserful_%s" % user.id, pk, user.id)
+            return Response({'success': True, 'message': '操作成功'})
+        else:
+            return Response({'success': False, 'message': '未登录'}, status=400)
+
+    @action(methods=['put'], detail=True, url_path="useful")
+    def question_by_userful(self, request, pk):
+        # 判断用户是否存在
+        try:
+            user = request.user
+        except:
+            user = None
+        if user is not None or user.is_is_authenticated:
+            redis_conn = get_redis_connection('question')
+            flag = redis_conn.hget("question_userful_%s" % user.id, pk)
+            if flag:
+                return Response({'success': False, 'message': '请不要重复操作'})
+            # 获取问答的对象
+            res = self.get_object()
+            # 无用数加1
+            res.useful_count += 1
+            # 保存
+            res.save()
+            # 将数据存入redis数据库
+            redis_conn.hset("question_userful_%s" % user.id, pk, user.id)
+            return Response({'success': True, 'message': '操作成功'})
+        else:
+            return Response({'success': False, 'message': '未登录'}, status=400)
 class ReplyViewSet(ModelViewSet):
     queryset = Reply.objects.all()
     serializer_class = RelySerializers
@@ -91,3 +140,50 @@ class ReplyViewSet(ModelViewSet):
             return Response({'sucess':True,'message':'增加成功'})
         else:
             return Response({'success': False, 'message': '未登录'}, status=400)
+    @action(methods=['put'],detail=True,url_path="unuseful")
+    def Reply_by_unuserful(self,request,pk):
+        # 判断用户是否存在
+        try:
+            user = request.user
+        except:
+            user = None
+        if user is not None or user.is_is_authenticated:
+            redis_conn = get_redis_connection('question')
+            flag = redis_conn.hget("reply_unuserful_%s" % user.id, pk)
+            if flag:
+                return Response({'success': False, 'message': '请不要重复操作'})
+            # 获取问答的对象
+            res = self.get_object()
+            # 无用数加1
+            res.unuseful_count += 1
+            # 保存
+            res.save()
+            # 将数据存入redis数据库
+            redis_conn.hset("reply_unuserful_%s" % user.id, pk,user.id)
+            return Response({'success': True, 'message': '操作成功'})
+        else:
+            return Response({'success': False, 'message': '未登录'}, status=400)
+    @action(methods=['put'],detail=True,url_path="useful")
+    def Reply_by_userful(self,request,pk):
+        # 判断用户是否存在
+        try:
+            user = request.user
+        except:
+            user = None
+        if user is not None or user.is_is_authenticated:
+            redis_conn = get_redis_connection('question')
+            flag = redis_conn.hget("reply_userful_%s" % user.id, pk)
+            if flag:
+                return Response({'success': False, 'message': '请不要重复操作'})
+            # 获取问答的对象
+            res = self.get_object()
+            # 无用数加1
+            res.useful_count += 1
+            # 保存
+            res.save()
+            # 将数据存入redis数据库
+            redis_conn.hset("reply_userful_%s" % user.id, pk,user.id)
+            return Response({'success': True, 'message': '操作成功'})
+        else:
+            return Response({'success': False, 'message': '未登录'}, status=400)
+
