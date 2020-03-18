@@ -18,12 +18,51 @@ class LabelsViewSet(ModelViewSet):
         label = self.get_object()
         s = LabelSerializerWithQuestionAndArticle(instance=label)
         return Response(s.data)
+    # #取消关注
+    # labels/{pk}/focusout/  取消关注标签
+    @action(methods=['put'], detail=True)
+    def focusout(self, request, pk):
+        try:
+            # 获取用户数据
+            user = request.user
+        except:
+            user = None
+        # 判断用户是否存在
+        if user is not None or user.is_authenticated:
+            art = self.get_object()
+            # 用户存在
+            # 用户存在
+            if user in art.users.all():
+                art.users.remove(user)
+                art.save()
+                return Response({'success': True, 'message': '取消收藏'})
+            else:
+                art.users.add(user)
+                art.save()
+                return Response({'success': True, 'message': '收藏成功'})
+    # 关注
+    @action(methods=['put'], detail=True, url_path='focusin')
+    def get_label_by_focusout(self, request, pk):
+        try:
+            # 获取用户数据
+            user = request.user
+        except:
+            user = None
+        # 判断用户是否存在
+        if user is not None or user.is_authenticated:
+            art = self.get_object()
+            # 用户存在
+            if user in art.users.all():
+                art.users.remove(user)
+                art.save()
+                return Response({'success': True, 'message': '取消收藏'})
+            else:
+                art.users.add(user)
+                art.save()
+                return Response({'success': True, 'message': '收藏成功'})
 
-    # labels/  获取标签基本信息列表
-    # def list(self, request):
-    #     labels = self.get_queryset()
-    #     s = LabelSerializerSimple(instance=labels, many=True)
-    #     return Response(s.data)
+
+
 
 
 
