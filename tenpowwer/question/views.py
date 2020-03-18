@@ -1,11 +1,30 @@
 from django.shortcuts import render
 from django_redis import get_redis_connection
+from question.models import Question
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 # Create your views here.
-from question.models import Question, Reply
-from question.serializers import  QueationSerializerForCreate,QuestionSerializerForDetail, RelySerializers
+from question.models import Question, Reply, Label
+from question.serializers import  QueationSerializerForCreate,QuestionSerializerForDetail, RelySerializers, \
+    LaderSerializer, LabelSerializerWithQuestionAndArticle
+
+
+class LabelsViewSet(ModelViewSet):
+    queryset = Label.objects.all()
+    serializer_class = LabelSerializerWithQuestionAndArticle
+    # labels/{pk}/  获取某个标签详情
+    def retrieve(self, request, pk):
+        label = self.get_object()
+        s = LabelSerializerWithQuestionAndArticle(instance=label)
+        return Response(s.data)
+
+    # labels/  获取标签基本信息列表
+    # def list(self, request):
+    #     labels = self.get_queryset()
+    #     s = LabelSerializerSimple(instance=labels, many=True)
+    #     return Response(s.data)
+
 
 
 class QuestionViewSet(ModelViewSet):
